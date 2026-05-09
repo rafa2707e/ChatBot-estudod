@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: bot-estudos
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./.wwebjs_auth:/app/.wwebjs_auth
