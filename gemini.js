@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // Função 1 - retorna texto bonito para o WhatsApp
-async function gerarPlanoEstudos(mensagemUsuario) {
+async function gerarPlanoEstudos(linguagem, area, nivel) {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -14,46 +14,46 @@ async function gerarPlanoEstudos(mensagemUsuario) {
             messages: [{
                 role: "user",
                 content:  `Você é um mentor de programação TechLead de uma BigTech.
-O usuário quer estudar: "${mensagemUsuario}".
+O usuário quer aprender ${linguagem} na área de ${area} e tem nível ${nivel}.
 
 Crie uma rotina de estudos para a semana atual (segunda a domingo).
 Use EXATAMENTE esse formato com emojis e asteriscos para WhatsApp:
 
-🎯 *PLANO DE ESTUDOS - ${mensagemUsuario.toUpperCase()}*
+🎯 *PLANO DE ESTUDOS - ${linguagem.toUpperCase()} | ${area} | ${nivel}*
 
 📅 *Segunda-feira*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Terça-feira*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Quarta-feira*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Quinta-feira*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Sexta-feira*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Sábado*
-📖 Tópico: [tópico do dia]
-▶️ Canal: [nome de um canal real do YouTube]
+📖 Tópico: [tópico adequado para nível ${nivel}]
+▶️ Canal: [canal real do YouTube]
 ✅ Meta: [o que o aluno deve conseguir fazer ao final do dia]
 
 📅 *Domingo* 🧪
 📖 Revisão geral da semana
-✅ Meta: Faça um projeto ou teste prático com tudo que aprendeu na semana!
+✅ Meta: Faça um projeto ou teste prático com tudo que aprendeu!
 
 💪 *Bons estudos! Consistência é a chave do sucesso!*`
             }]
@@ -65,7 +65,7 @@ Use EXATAMENTE esse formato com emojis e asteriscos para WhatsApp:
 }
 
 // Função 2 - retorna JSON estruturado para salvar no Notion
-async function gerarPlanoJSON(mensagemUsuario) {
+async function gerarPlanoJSON(linguagem, area, nivel) {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -78,7 +78,7 @@ async function gerarPlanoJSON(mensagemUsuario) {
             messages: [{
                 role: "user",
                 content: `Você é um mentor de programação ou TechLead de uma BigTech.
-                          O usuário quer estudar: "${mensagemUsuario}".
+                          O usuário quer estudar: "${linguagem}" na ${area} e tem o nivel ${nivel}.
                           Crie um plano de estudos para 7 dias da semana.
                           Retorne APENAS um JSON válido, sem texto adicional, sem markdown, sem explicação:
                           {
@@ -96,10 +96,9 @@ async function gerarPlanoJSON(mensagemUsuario) {
 
     const data = await response.json();
     const texto = data.choices[0].message.content;
-    
-    // Remove possíveis markdowns como ```json
     const limpo = texto.replace(/```json|```/g, '').trim();
-    return JSON.parse(limpo);
+    return JSON.parse(limpo); // ← só um return, no final
 }
+
 
 module.exports = { gerarPlanoEstudos, gerarPlanoJSON };
